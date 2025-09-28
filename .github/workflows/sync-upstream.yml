@@ -23,9 +23,15 @@ jobs:
           git checkout main
           git checkout upstream-branch -- docker
           cd docker
-          ./portainer.sh build
+          ./portainer.sh build ''
+          ./portainer.sh hwaccel '' transcoding
+          ./portainer.sh hwaccel '' ml
           ./portainer.sh build .dev
+          ./portainer.sh hwaccel .dev transcoding
+          ./portainer.sh hwaccel .dev ml
           ./portainer.sh build .prod
+          ./portainer.sh hwaccel .prod transcoding
+          ./portainer.sh hwaccel .prod ml
 
       - name: Commit changes if updates exist
         run: |
