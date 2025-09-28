@@ -1,0 +1,40 @@
+name: Sync Upstream Repository
+
+on:
+  schedule:
+    # 每天 UTC 时间 0 点运行（北京时间 8 点）
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 拉取完整历史记录
+
+      - name: Fetch upstream changes
+        run: |
+          git remote add upstream https://github.com/immich-app/immich.git || true
+          git fetch upstream
+          git checkout -b upstream-branch upstream/main
+          git checkout main
+          git checkout upstream-branch -- docker
+          cd docker
+          ./portainer.sh build
+          ./portainer.sh build .dev
+          ./portainer.sh build .prod
+
+      - name: Commit changes if updates exist
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          if git diff --quiet --cached; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: sync updates from upstream"
+            git push origin main
+          fi
