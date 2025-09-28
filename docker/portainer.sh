@@ -4,7 +4,7 @@ build(){
     from="docker-compose${1:-""}.yml"
     to="docker-compose${1:-""}.portainer.yml"
     cp $from $to
-    sed -i 's/.env/stack.env/' $to
+    sed -i 's/\.env/stack.env/g' $to
     echo "build $to"
 }
 
