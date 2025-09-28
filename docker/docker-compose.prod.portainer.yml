@@ -13,9 +13,9 @@ services:
   immich-server:
     container_name: immich_server
     image: immich-server:latest
-    # extends:
-    #   file: hwaccel.transcoding.yml
-    #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
+    extends:
+      file: hwaccel.transcoding.yml
+      service: ${HWACCEL_TRANSCODING_SERVICE:-cpu} # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     build:
       context: ../
       dockerfile: server/Dockerfile
@@ -36,9 +36,9 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: immich-machine-learning:latest
-    # extends:
-    #   file: hwaccel.ml.yml
-    #   service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference
+    extends:
+      file: hwaccel.ml.yml
+      service: ${HWACCEL_ML_SERVICE:-cpu} # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference
     build:
       context: ../machine-learning
       dockerfile: Dockerfile
