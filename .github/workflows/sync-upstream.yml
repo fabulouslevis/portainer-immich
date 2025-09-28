@@ -23,6 +23,7 @@ jobs:
           git checkout main
           git checkout upstream-branch -- docker
           cd docker
+          cp example.env stack.env
           ./portainer.sh build
           ./portainer.sh build .dev
           ./portainer.sh build .prod
