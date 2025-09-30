@@ -1,11 +1,11 @@
 #!/bin/bash
 
-build(){
+env(){
     from="docker-compose$1.yml"
     to="docker-compose$1.portainer.yml"
     cp $from $to
     sed -i 's/\.env/stack.env/g' $to
-    echo "build $to"
+    echo "env $to"
 }
 
 hwaccel(){
@@ -21,16 +21,27 @@ hwaccel(){
     echo "hwaccel $2 enabled"
 }
 
+ml(){
+    to="docker-compose$1.portainer.yml"
+    key="ghcr.io/immich-app/immich-machine-learning"
+    line=$(grep -n $key $to | cut -d: -f1)
+    sed -i "${line} s/\${IMMICH_VERSION:-release}/\${IMMICH_VERSION:-release}\${MACHINE_LEARNING_SUFFIX:-}/" $to
+    echo "ml $2 add suffix"
+}
+
 
 case "$1" in
-    build)
-        build "$2"
+    env)
+        env "$2"
         ;;
     hwaccel)
         hwaccel "$2" ${3:-"transcoding"}
         ;;
+    ml)
+        ml "$2"
+        ;;
     *)
-        echo "Usage: $0 {build}"
+        echo "Usage: $0 {env|hwaccel|ml}"
         exit 1
         ;;
 esac
